@@ -1,22 +1,153 @@
 # Medical-LLM-Assistant
-PDF 의료 문서를 벡터 데이터베이스로 변환하여 증상 기반 질문에 답변하는 스마트 의료 어시스턴트이다.
 
-본 시스템은 GPT-4-o 기반의 자연어 생성 기능과 FAISS 기반의 정보 검색 기능을 결합한 RAG(Retrieval-Augmented Generation) 구조로 설계되었다. 사용자는 Streamlit 웹 인터페이스를 통해 증상이나 질병 관련 질문을 입력하며, 시스템은 이를 기반으로 MSD 매뉴얼에서 수집한 증상별 문서를 검색하고 응답을 생성한다.
+PDF 기반 의료 문서를 검색하고, 검색된 정보를 바탕으로 LLM이 답변을 생성하는 **RAG (Retrieval-Augmented Generation) 기반 의료 질의응답 시스템**입니다.
 
-정보 검색 단계에서는 LangChain 프레임워크를 기반으로 문서 임베딩을 수행하고, FAISS 벡터 스토어를 통해 입력 질의와 가장 유사한 문서를 추출한다. 검색된 문서는 GPT-4-o 언어 모델의 프롬프트에 삽입되며, 해당 맥락을 바탕으로 사용자의 질문에 대해 친화적인 자연어 설명을 제공한다.
+본 프로젝트에서는 의료 문서를 벡터 데이터베이스로 구축하고, 사용자의 질문과 관련된 문서를 검색한 뒤 LLM의 입력으로 활용하는 **검색-생성 파이프라인을 설계 및 구현**했습니다.
 
-프론트엔드는 Streamlit으로 구성되어 있어 질문 입력, 입력 예시 제공, 질문 자동 완성 응답, 출력 등의 기능을 제공한다. 전체 시스템은 하나의 Python 스크립트 내에서 통합적으로 작동하며, PDF 문서 처리에는 PyMuPDF 기반의 PyPDFLoader를 사용하고, 임베딩 처리에는 OpenAI의 text-embedding-3-small 모델을 활용한다.
+---
 
-증상 키워드를 포함한 테스트 질의를 통해 FAISS 검색 결과의 적합성을 검증하고, GPT-4-o가 생성한 응답의 관련성과 자연스러움을 확인하였다. 또한 Streamlit 인터페이스에서의 작동 흐름과 안정성도 점검하였다.
+# Project Overview
 
-[실제 stramlit 화면]
-![이미지1](./images/image1.png)  
-QA 프롬프트로 재구성 되어 맞춤형 질문이 가능하다
+## Motivation
 
-[질의와 문서간 유사도 score 산출]
+의료 분야에서는 질문에 대한 답변뿐만 아니라, **신뢰할 수 있는 관련 정보를 검색하고 이를 바탕으로 답변을 생성하는 과정**이 중요합니다.
 
-![이미지2](./images/image2.png)  
-전체 평균 score은 1.0556으로 높은 신뢰도 기반의 응답 생성이 확인된다
+본 프로젝트에서는 LLM이 보유한 지식만을 사용하는 대신, 의료 문서를 외부 지식으로 구축하고 질문과 관련된 정보를 검색하여 답변 생성에 활용하는 RAG 구조를 구현했습니다.
 
+---
 
+# Objectives
+
+- 의료 PDF 문서의 전처리 및 벡터화
+- 사용자 질문과 관련된 의료 정보 검색
+- FAISS 기반 벡터 검색 시스템 구축
+- 검색 결과를 활용한 LLM 답변 생성
+- Streamlit 기반 의료 질의응답 인터페이스 구현
+
+---
+
+# System Architecture
+
+```text
+Medical PDF Documents
+        ↓
+Document Loading
+        ↓
+Text Splitting
+        ↓
+Text Embedding
+        ↓
+FAISS Vector Store
+        ↓
+User Query
+        ↓
+Similarity Search
+        ↓
+Retrieved Documents
+        ↓
+LLM Prompt
+        ↓
+GPT-4o
+        ↓
+Generated Answer
+````
+
+---
+
+# Workflow
+
+### 1. Medical Document Processing
+
+MSD 매뉴얼에서 수집한 의료 PDF 문서를 불러와 질의응답에 활용할 수 있도록 전처리합니다.
+
+PyMuPDF 기반의 `PyPDFLoader`를 이용하여 PDF 문서의 텍스트를 추출하고 검색 가능한 형태로 변환합니다.
+
+---
+
+### 2. Text Embedding
+
+전처리된 문서를 텍스트 단위로 분할한 후 OpenAI의 `text-embedding-3-small` 모델을 이용하여 벡터 임베딩을 생성합니다.
+
+---
+
+### 3. Vector Database
+
+생성된 임베딩을 **FAISS Vector Store**에 저장하여 사용자의 질문과 의미적으로 유사한 의료 문서를 검색할 수 있도록 구성했습니다.
+
+---
+
+### 4. Similarity Search
+
+사용자가 입력한 질문을 임베딩한 후 FAISS를 이용하여 관련성이 높은 문서를 검색합니다.
+
+검색된 문서는 LLM의 답변 생성을 위한 context로 사용됩니다.
+
+---
+
+### 5. LLM-based Answer Generation
+
+검색된 의료 문서와 사용자의 질문을 함께 LLM에 전달하여, 검색된 정보를 기반으로 자연어 답변을 생성합니다.
+
+---
+
+### 6. Web Interface
+
+Streamlit을 이용하여 사용자가 증상이나 질병과 관련된 질문을 입력하고 생성된 답변을 확인할 수 있는 인터페이스를 구현했습니다.
+
+---
+
+# Core Technologies
+
+## Retrieval-Augmented Generation
+
+RAG 구조를 통해 외부 의료 문서를 검색하고, 검색된 정보를 LLM의 context로 제공하여 답변을 생성합니다.
+
+이를 통해 질문과 관련된 문서를 검색하는 **Retrieval** 단계와 자연어 답변을 생성하는 **Generation** 단계를 하나의 파이프라인으로 구성했습니다.
+
+---
+
+## FAISS
+
+FAISS를 이용하여 벡터화된 의료 문서와 사용자 질문 간의 유사도를 계산하고 관련 문서를 검색합니다.
+
+---
+
+## LangChain
+
+LangChain을 활용하여 문서 로딩, 텍스트 분할, 임베딩, 벡터 검색 및 LLM 호출 과정을 연결했습니다.
+
+---
+
+# Experimental Setup
+
+| Component       | Technology             |
+| --------------- | ---------------------- |
+| LLM             | GPT-4o                 |
+| Embedding       | text-embedding-3-small |
+| Vector Store    | FAISS                  |
+| Framework       | LangChain              |
+| Document Loader | PyPDFLoader            |
+| PDF Processing  | PyMuPDF                |
+| Interface       | Streamlit              |
+| Language        | Python                 |
+
+---
+
+# Evaluation
+
+증상 및 질병 관련 테스트 질의를 구성하여 검색된 문서의 관련성과 생성된 답변의 적절성을 확인했습니다.
+
+또한 검색 결과의 similarity score를 확인하여 사용자 질문과 검색 문서 간의 관련성을 분석했습니다.
+
+---
+
+# My Contributions
+
+* 의료 질의응답 시스템 기획 및 설계
+* 의료 PDF 문서 전처리 및 데이터 구축
+* 문서 임베딩 및 FAISS 기반 벡터 검색 구현
+* LangChain 기반 RAG pipeline 구축
+* LLM prompt 설계 및 답변 생성 구현
+* Streamlit 기반 사용자 인터페이스 구현
+* 검색 결과 및 시스템 동작 검증
 
