@@ -147,7 +147,7 @@ LangChain을 활용하여 문서 로딩, 텍스트 분할, 임베딩, 벡터 검
 * 의료 PDF 문서 전처리 및 데이터 구축
 * 문서 임베딩 및 FAISS 기반 벡터 검색 구현
 * LangChain 기반 RAG pipeline 구축
-* LLM prompt 설계 및 답변 생성 구현
 * Streamlit 기반 사용자 인터페이스 구현
+* LLM prompt 설계 및 답변 생성 구현
 * 검색 결과 및 시스템 동작 검증
 
