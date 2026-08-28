@@ -213,12 +213,7 @@ LangChain을 활용하여 문서 로딩, 텍스트 분할, 임베딩, 벡터 검
 
 실험 결과, 질환 카테고리별 평균 검색 거리는 다음과 같이 나타났습니다.
 
-| Disease Category    | Average Score | Context Relevance |
-| ------------------- | ------------: | ----------------- |
-| Respiratory         |         0.932 | High              |
-| Digestive           |         1.077 | Moderate          |
-| Neurological        |         1.158 | Low               |
-| **Overall Average** |    **1.0556** | -                 |
+![Medical RAG System](./images/image1.png)
 
 검색 결과를 통해 질환 유형에 따라 사용자 증상과 의료 문서 간의 검색 관련성이 달라질 수 있음을 확인했습니다.
 
