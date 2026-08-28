@@ -1,4 +1,4 @@
-# Medical-LLM-Assistant
+# Medical-LLM-Assistant 
 
 > A GPT-4o-based medical consultation RAG system integrating medical document retrieval, symptom-based disease inference, and conversational question answering.
 
