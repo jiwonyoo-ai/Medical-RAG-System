@@ -1,4 +1,4 @@
-# Medical-LLM-Assistant
+# Medical-LLM-Assistant 
 
 > A retrieval-augmented question answering system that retrieves relevant information from medical documents and generates context-aware answers using GPT-4o.
 
